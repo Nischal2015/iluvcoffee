@@ -1,8 +1,10 @@
 version: '3.8'
 services:
-  api:
+  backend:
     image: postgres:13
+    container_name: nestjs-iluvcoffee
     restart: always
-    ports: -5432:5432
-    environment:
-      POSTGRES_PASSWORD: pass123
+    ports:
+      - 1234:5432
+    env_file:
+      - .env
