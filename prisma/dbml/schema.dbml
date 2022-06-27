@@ -1,0 +1,19 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Flavor {
+  id String [pk]
+  name String [not null]
+  coffees Coffee [not null]
+}
+
+Table Coffee {
+  id String [pk]
+  name String [not null]
+  brand String [not null]
+  flavors Flavor [not null]
+  flavorId String [not null]
+}
+
+Ref: Coffee.flavorId > Flavor.id

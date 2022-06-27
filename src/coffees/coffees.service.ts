@@ -1,45 +1,44 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateCoffeeDto } from './dto';
-import { Coffee } from './entity';
 
 @Injectable()
 export class CoffeesService {
-  private coffees: Coffee[] = [
-    {
-      id: 1,
-      name: "Babean's Coffee",
-      brand: 'Babean',
-      flavors: ['vanilla', 'chocolate'],
-    },
-  ];
+  constructor(private readonly prisma: PrismaService) {}
 
   findAll() {
-    return this.coffees;
+    return this.prisma.coffee.findMany();
   }
 
-  findOne(id: string) {
-    const coffee = this.coffees.find((coffee) => coffee.id === +id);
+  async findOne(id: string) {
+    const coffee = await this.prisma.coffee.findFirst({
+      where: { id },
+    });
     if (!coffee) throw new NotFoundException(`Coffee with id ${id} not found`);
     return coffee;
   }
 
-  create(createCoffeeDto: any) {
-    this.coffees.push(createCoffeeDto);
-    return createCoffeeDto;
+  async create(createCoffeeDto: any) {
+    const coffee = await this.prisma.coffee.create({
+      data: {
+        ...createCoffeeDto,
+      },
+    });
+    return coffee;
   }
 
-  update(id: string, updateCoffee: UpdateCoffeeDto) {
-    const coffeeIndex = this.coffees.findIndex((item) => item.id === +id);
-    if (coffeeIndex >= 0) {
-      this.coffees[coffeeIndex] = {
-        ...this.coffees[coffeeIndex],
-        ...updateCoffee,
-      };
-    }
+  async update(id: string, updateCoffee: UpdateCoffeeDto) {
+    const coffee = await this.prisma.coffee.findUnique({ where: { id } });
+    if (!coffee)
+      throw new NotFoundException(`Cannot update coffee with id ${id}`);
+    return this.prisma.coffee.update({
+      where: { id },
+      data: updateCoffee,
+    });
   }
 
-  remove(id: string) {
-    const coffeeIndex = this.coffees.findIndex((item) => item.id === +id);
-    if (coffeeIndex >= 0) this.coffees.splice(coffeeIndex, 1);
+  async remove(id: string) {
+    const coffee = await this.findOne(id);
+    await this.prisma.coffee.delete({ where: { id: coffee.id } });
   }
 }
