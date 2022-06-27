@@ -16,7 +16,7 @@ generator dbml {
 
 model Flavor {
   id      String   @id @default(cuid())
-  name    String
+  name    String   @unique
   coffees Coffee[]
 }
 

@@ -4,7 +4,7 @@
 
 Table Flavor {
   id String [pk]
-  name String [not null]
+  name String [unique, not null]
   coffees Coffee [not null]
 }
 
@@ -13,7 +13,9 @@ Table Coffee {
   name String [not null]
   brand String [not null]
   flavors Flavor [not null]
-  flavorId String [not null]
 }
 
-Ref: Coffee.flavorId > Flavor.id
+Table CoffeeToFlavor {
+  coffeesId String [ref: > Coffee.id]
+  flavorsId String [ref: > Flavor.id]
+}
