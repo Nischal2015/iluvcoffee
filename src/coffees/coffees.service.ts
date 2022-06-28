@@ -1,15 +1,21 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PaginationQueryDto } from 'src/common/pagination-query.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { COFFEE_BRANDS } from './coffees.constant';
 import { CreateCoffeeDto, UpdateCoffeeDto } from './dto';
 
 @Injectable()
 export class CoffeesService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(COFFEE_BRANDS) coffeeBrands: string[],
+  ) {
     prisma.$on<any>('query', (event: Prisma.QueryEvent) => {
       console.log('Query: ' + event.query);
     });
+
+    console.log({ coffeeBrands });
   }
 
   findAll(paginationQuery: PaginationQueryDto) {
